@@ -75,18 +75,27 @@ def get_authenticated_session_info(username, password):
         print("-----Navigating to the correct page-----")
                 
         driver.find_element(By.ID, "registerLink").click()
-        driver.find_element(By.ID, "select2-container term-combo2 select2-dropdown-open select2-container-active").click()
+        time.sleep(2)
+        driver.find_element(By.ID, "s2id_txt_term").click()
+        time.sleep(2)
+
+        options_container_xpath = "//ul[contains(@class, 'select2-results__options')]"
+        wait.until(EC.visibility_of_element_located((By.XPATH, options_container_xpath)))
+        
+        all_options = driver.find_elements(By.XPATH, f"{options_container_xpath}/li")
+        for option in all_options:
+            print(option.text)
 
 
 
-        # 5. The page is now fully loaded. Extract the uniqueSessionId from the page's source code.
+        # 6. The page is now fully loaded. Extract the uniqueSessionId from the page's source code.
         print("🔍 Extracting uniqueSessionId from the SessionStorage...")
         time.sleep(2)
 
         session_id = driver.execute_script(f"return sessionStorage.getItem('{STORAGE_KEY}')")
         print(f"   => Found ID: {session_id}")
 
-        # 6. Extract the login cookies from the browser session.
+        # 7. Extract the login cookies from the browser session.
         print("🍪 Extracting session cookies...")
         selenium_cookies = driver.get_cookies()
 
@@ -96,7 +105,7 @@ def get_authenticated_session_info(username, password):
         print(f"❌ An error occurred during the Selenium login process: {e}")
         return None, None
     finally:
-        # 7. IMPORTANT: Always close the browser window.
+        # 8. IMPORTANT: Always close the browser window.
         # print("🚪 Closing browser.")
         # driver.quit()
         print("Close the browser later")
