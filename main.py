@@ -18,6 +18,8 @@ from webdriver_manager.chrome import ChromeDriverManager
 TARGET_TERM = "202510"
 TARGET_SUBJECT = "ICS"
 TARGET_COURSE_NUMBER = "433"
+
+STORAGE_KEY = "xe.unique.session.storage.id" 
 # --------------------
 
 # --- URLs ---
@@ -69,24 +71,24 @@ def get_authenticated_session_info(username, password):
         wait.until(EC.visibility_of_element_located((By.ID, "registerLink")))
         print("✅ Successfully logged in!")
 
-        # 5. The page is now fully loaded. Extract the uniqueSessionId from the page's source code.
-        # print("🔍 Extracting uniqueSessionId from the page...")
-        # page_source = driver.page_source
-        # match = re.search(r'"uniqueSessionId"\s*:\s*"(\w+)"', page_source)
-        
-        # if not match:
-        #     print("❌ ERROR: Logged in, but could not find the uniqueSessionId on the page.")
-        #     return None, None
+        # 5. The page is now fully loaded. Navigate to the appropriate page to ensure the sessionId is correct
+        print("-----Navigating to the correct page-----")
+                
+        driver.find_element(By.ID, "registerLink").click()
 
-        # session_id = match.group(1)
-        # print(f"   => Found ID: {session_id}")
+
+
+        # 5. The page is now fully loaded. Extract the uniqueSessionId from the page's source code.
+        print("🔍 Extracting uniqueSessionId from the SessionStorage...")
+        time.sleep(2)
+
+        session_id = driver.execute_script(f"return sessionStorage.getItem('{STORAGE_KEY}')")
+        print(f"   => Found ID: {session_id}")
 
         # 6. Extract the login cookies from the browser session.
         print("🍪 Extracting session cookies...")
         selenium_cookies = driver.get_cookies()
 
-        session_id = None
-        
         return session_id, selenium_cookies
 
     except Exception as e:
@@ -94,8 +96,9 @@ def get_authenticated_session_info(username, password):
         return None, None
     finally:
         # 7. IMPORTANT: Always close the browser window.
-        print("🚪 Closing browser.")
-        driver.quit()
+        # print("🚪 Closing browser.")
+        # driver.quit()
+        print("Close the browser later")
 
 
 def fetch_course_data(cookies, session_id):
@@ -153,8 +156,9 @@ if __name__ == "__main__":
     unique_id, auth_cookies = get_authenticated_session_info(kfupm_user, kfupm_pass)
 
     # --- Execute Phase 2 (only if Phase 1 was successful) ---
-    if auth_cookies:
-        course_data = fetch_course_data(auth_cookies, 202273620)
+    if unique_id and auth_cookies:
+        print(auth_cookies)
+        course_data = fetch_course_data(auth_cookies, unique_id)
         if course_data:
             print("\n" + "="*30)
             print("      COURSE DATA RECEIVED")
