@@ -75,6 +75,7 @@ def get_authenticated_session_info(username, password):
         print("-----Navigating to the correct page-----")
                 
         driver.find_element(By.ID, "registerLink").click()
+        driver.find_element(By.ID, "select2-container term-combo2 select2-dropdown-open select2-container-active").click()
 
 
 
