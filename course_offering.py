@@ -21,11 +21,11 @@ def send_request():
         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36',
     }
 
-    dept_code = input("Enter department code (e.g., ICS): ")
+    # dept_code = input("Enter department code (e.g., ICS): ")
 
     params = {
         'term_code': '202510',
-        'department_code': dept_code,
+        'department_code': 'ICS',
         'bcs': 'HH99-UTRR-9K9K-RRRR-FE69',
     }
 
