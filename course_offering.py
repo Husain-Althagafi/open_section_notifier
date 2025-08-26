@@ -59,7 +59,6 @@ def send_request():
             print(json.dumps(course, indent=4))
             is_open(course)
 
-    
 
 
 def send_telegram_message(message_text):
