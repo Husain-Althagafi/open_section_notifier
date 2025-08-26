@@ -2,7 +2,7 @@ name: Run Python Script on a Schedule
 
 on:
   schedule:
-    - cron: '/01 * * * *'  # Runs every minute
+    - cron: '* * * * *'  # Runs every minute
   workflow_dispatch:      # Allows manual triggering of the workflow
 
 jobs:
