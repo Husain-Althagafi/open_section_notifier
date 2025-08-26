@@ -42,12 +42,12 @@ async def track(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.message.chat_id
 
     try:
-        dept = dept = context.args[0].upper()
+        dept = context.args[0].upper()
         crn = context.args[1]
 
         data, count = supabase.table('tracking_requests').insert({
             "user_chat_id": chat_id,
-            "department_code": dept,
+            "dept_code": dept,
             "crn": crn
         }).execute()
 
