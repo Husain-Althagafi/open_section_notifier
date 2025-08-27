@@ -127,7 +127,7 @@ def remove_tracking_after_found(crn):
         print(f"Error removing tracking requests for {crn}: {e}")
 
 
-def send_telegram_message(message_text):
+def notify_tele_users(chatids, crn, dept):
 
     """
     Send a message via Telegram bot. Uses github secrets for bot token and chat ID.
@@ -135,28 +135,38 @@ def send_telegram_message(message_text):
     """
 
     bot_token = os.environ.get("TELEGRAM_BOT_TOKEN")
-    chat_id = os.environ.get("TELEGRAM_CHAT_ID")
 
-    if not bot_token or not chat_id:
+    api_url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+
+    if not bot_token or len(chatids) == 0:
         print("Error with telegram bot")
         return
     
-    api_url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
-
+    message_text = f"A section is open in {dept} {crn}"
     escaped_text = message_text.replace("-", "\\-").replace(".", "\\.").replace("!", "\\!")
 
-    payload = {
-        'chat_id': chat_id,
-        'text': escaped_text,
-        'parse_mode': 'MarkdownV2'
-    }
+    for chat_id in chatids:
+        payload = {
+            'chat_id': chat_id,
+            'text': escaped_text,
+            'parse_mode': 'MarkdownV2'
+        }
 
+        try:
+            response = requests.post(api_url, json=payload)
+            response.raise_for_status()     
+            print("Telegram notification sent successfully")
+        except requests.exceptions.RequestException as e:
+                print(f"Error sending Telegram message: {e}")
+
+
+def remove_tracking_for_crn(crn):
+    """Deletes all tracking requests for a CRN after notifications are sent."""
     try:
-        response = requests.post(api_url, json=payload)
-        response.raise_for_status()     
-        print("Telegram notification sent successfully")
-    except requests.exceptions.RequestException as e:
-            print(f"Error sending Telegram message: {e}")
+        supabase.table('tracking_requests').delete().eq('crn', crn).execute()
+        print(f"Successfully removed tracking requests for CRN {crn}.")
+    except Exception as e:
+        print(f"Error removing tracking requests for CRN {crn}: {e}")    
 
     
 def main():
@@ -186,18 +196,31 @@ def main():
         for crn in dept_crn[dept]:
             print(f'dept: {dept} crn {crn}')
 
-    print(f' --- Getting Seat Data ---')
-    # for each dict we will send a request with all the crns under it
-
-    sections_with_available_seats = []
+    print(f' --- Getting Seat Data for Dept: {dept} ---')
 
     for dept in dept_crn.keys():
         sections_with_available_seats_for_dept = get_seats_in_dept(dept, dept_crn[dept])
         print(sections_with_available_seats_for_dept)
-    
-        
-        
 
+        #send the request for each dept
+        
+        crns_to_notify = dept_crn[dept]
+        for crn in crns_to_notify:
+            print(f' --- Sending Notifications for All Users Tracking crn: {crn}')
+
+            # message = (
+            #     f"🎉 *Spot Available!*\n\n"
+            #     f"A spot has opened up in the section with the crn: {crn} \n"
+            #     f"Go register now!"
+            # )
+
+            users_to_notify = get_users_tracking_section(crn) #returns the list of chat ids that should be notified
+
+            notify_tele_users(users_to_notify, crn, dept)
+            remove_tracking_for_crn(crn)
+        
+        print(f' --- Deleting Fulfilled Tracking Requests --- ')
+        #TODO finish logic for deleting tracking requests that are fullfilled
 
 if __name__ == "__main__":
     main()
