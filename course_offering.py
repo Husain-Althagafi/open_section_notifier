@@ -47,7 +47,10 @@ def get_seats_in_dept(dept, crn_list):
         'bcs': 'HH99-UTRR-9K9K-RRRR-FE69',
     }
 
-    try:
+    try:    
+        print(f'Getting seat info for {dept}')
+
+
         response = requests.get('https://us-east1-course-offering-us-east1.cloudfunctions.net/courses', params=params, headers=headers)
         response.raise_for_status()
 
@@ -64,16 +67,16 @@ def get_seats_in_dept(dept, crn_list):
             max_seats = section.get('capacity', {}).get('seats', {}).get('maximum', 0)
             taken_seats = section.get('capacity', {}).get('seats', {}).get('taken', 0)
             if max_seats > taken_seats:
-                sections_with_available_seats.append((section.get('crn'), max_seats - taken_seats))        #store tuples (crn, available seats)
+                sections_with_available_seats.append((section.get('crn'), max_seats - taken_seats))   #store tuples (crn, available seats)
         
         return sections_with_available_seats
 
     except requests.exceptions.RequestException as e:
         print(f"Error making request for {dept} {crn_list}: {e}")
-        return 0
+        return []
     except (json.JSONDecodeError, KeyError) as e:
         print(f"Error parsing response for {dept} {crn_list}: {e}")
-        return 0
+        return []
     
 
 
@@ -124,60 +127,6 @@ def remove_tracking_after_found(crn):
         print(f"Error removing tracking requests for {crn}: {e}")
 
 
-def send_request():
-
-    """
-    Send a GET request to the course-offering.com API to retrieve course data.
-
-    Returns the JSON response containing course information for the specified department and CRN.
-
-    """
-
-    # Configuration for the request
-    headers = {
-        'accept': '*/*',
-        'accept-language': 'en-US,en;q=0.9',
-        'cache-control': 'no-cache',
-        'origin': 'https://course-offering.com',
-        'pragma': 'no-cache',
-        'priority': 'u=1, i',
-        'referer': 'https://course-offering.com/',
-        'sec-ch-ua': '"Not;A=Brand";v="99", "Google Chrome";v="139", "Chromium";v="139"',
-        'sec-ch-ua-mobile': '?0',
-        'sec-ch-ua-platform': '"Windows"',
-        'sec-fetch-dest': 'empty',
-        'sec-fetch-mode': 'cors',
-        'sec-fetch-site': 'cross-site',
-        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36',
-    }
-
-    params = {
-        'term_code': '202510',
-        'department_code': 'ICS',
-        'bcs': 'HH99-UTRR-9K9K-RRRR-FE69',
-    }
-
-    response = requests.get('https://us-east1-course-offering-us-east1.cloudfunctions.net/courses', params=params, headers=headers)
-
-    # CRN = input("Enter CRN (e.g., 13912): ")
-
-    # for course in response.json()['data']:
-    #     if course['crn'] == CRN:
-    #         print('COURSE FOUND BY CRN:', CRN)
-    #         print(json.dumps(course, indent=4))
-    i = 0
-    for course in response.json()['data']:
-        if i < 5:
-            get_available_seats(course)
-            i+=1
-
-        if course['name'] == 'ICS433' and course['sections'][0]['schedule']['time']['start'] == '1000':
-            print('COURSE FOUND')
-            print(json.dumps(course, indent=4))
-            get_available_seats(course)
-
-
-
 def send_telegram_message(message_text):
 
     """
@@ -209,28 +158,6 @@ def send_telegram_message(message_text):
     except requests.exceptions.RequestException as e:
             print(f"Error sending Telegram message: {e}")
 
-
-def get_available_seats(course):
-
-    """
-    Check if a course section is open based on its if there are available seats.
-    returns number of available seats
-    returns -1 if none are available
-
-    """
-
-    max_seats = course['capacity']['seats']['maximum']
-    taken_seats = course['capacity']['seats']['taken']
-    available_seats = max_seats - taken_seats
-    
-    if available_seats > 0:
-        print("SECTION HAS OPEN SEATS")
-        message = f"Section {course['crn']} of course: {course['name']} is open with {available_seats} available seats!"
-        send_telegram_message(message)
-        return available_seats
-    else:
-        print("SECTION IS FULL")
-        return -1
     
 def main():
     print('--- Starting Scraping Run ---')
@@ -253,11 +180,21 @@ def main():
             dept_crn[dept] = []
         dept_crn[dept].append(crn)
     
-    print(f'--- tracked sections ---')
+    print(f'--- Tracked Sections ---')
     
     for dept in dept_crn.keys():
         for crn in dept_crn[dept]:
             print(f'dept: {dept} crn {crn}')
+
+    print(f' --- Getting Seat Data ---')
+    # for each dict we will send a request with all the crns under it
+
+    sections_with_available_seats = []
+
+    for dept in dept_crn.keys():
+        sections_with_available_seats_for_dept = get_seats_in_dept(dept, dept_crn[dept])
+        print(sections_with_available_seats_for_dept)
+    
         
         
 
