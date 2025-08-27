@@ -1,6 +1,5 @@
 # KFUPM Course Availability Notifier
 
-![Project Banner](https://your-image-host.com/banner.png)  <!-- Optional: Create a cool banner image -->
 
 A multi-user Telegram bot and automated scraper that notifies students at King Fahd University of Petroleum and Minerals (KFUPM) when a spot opens up in a full course section.
 
@@ -28,11 +27,10 @@ This project is built on a decoupled, serverless architecture, ensuring scalabil
 4.  **The Logic:** The scraper connects to the Supabase database to get the full list of all courses being tracked. It then makes an efficient, single API call per department to KFUPM's course offering API to check for seat availability.
 5.  **The Notification:** If an open spot is found, the scraper queries the database to find all users tracking that specific course and sends a personalized notification to each one via the Telegram Bot API. The tracking request is then removed to prevent spam.
 
-![Architecture Diagram](https://your-image-host.com/architecture.png) <!-- Optional: A diagram is great for complex projects -->
 
 ## 🚀 Getting Started
 
-You can interact with the live bot on Telegram here: [Your Bot's Telegram Link](https://t.me/YourBotUsername)
+You can interact with the live bot on Telegram here: [Your Bot's Telegram Link](https://t.me/qvcCourseTrackerBot)
 
 ### Telegram Bot Commands
 
@@ -41,6 +39,8 @@ Once you've started a chat with the bot, you can use the following commands:
 -   `/start` - Display the welcome message.
 -   `/track <DEPT> <CRN>` - Start tracking a specific course section.
     -   *Example:* `/track ICS 202`
+ 
+TODO
 -   `/untrack <DEPT> <CRN>` - Stop tracking a course section.
     -   *Example:* `/untrack ICS 202`
 -   `/mycourses` - List all the courses you are currently tracking.
