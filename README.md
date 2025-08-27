@@ -18,8 +18,10 @@ A multi-user Telegram bot (for now) and automated scraper that notifies students
 
 If you want to use the bot you are gonna have to run some things locally since I won't keep the bot script running myself. But it is really easy to set up I'll have instructions here.
 
-1. **telebot.py** This is the script for hosting the bot and its commands, you will need this running either on a server or locally. You only need this running when making the tracking request, the tracking itself and the notifications dont need this script.
-2. **course_offering.py
+- **telebot.py** This is the script for hosting the bot and its commands, you will need this running either on a server or locally. You only need this running when making the tracking request, the tracking itself and the notifications dont need this script.
+- **course_offering.py** This is the automation script. I'll probably keep this running with actions but if I dont sorry. This is whats needed for the tracking and the notifying of available sections.
+- If you want to run everything yourself then you will need to set up your own supabase database. ezez
+
 
 
 ## 🚀 Getting Started
