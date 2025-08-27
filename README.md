@@ -44,3 +44,20 @@ These aren't done yet TODO
 ---
 
 
+Speedrun tutorial (should write a better one later):
+
+gonna assume u dont need tutorial for the supabase stuff
+1. fork the repo
+2. clone it locally
+3. cd into repo
+4. make a venv and install the requirements
+5. set up a .env with the required information
+6. have a 2nd terminal where u run the telebot.py script (now the telegram bot and the storing of track requests in the database should work
+7. check that the github actions is working and it should run the course_offering.py script around every ten minutes
+
+i think thats it, very simple and not polished but ill fix those in time if i feel like it
+
+thanks for looking at my work <3
+
+
+
