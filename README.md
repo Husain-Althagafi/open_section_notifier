@@ -1,9 +1,8 @@
 # KFUPM Course Availability Notifier
 
 
-A multi-user Telegram bot and automated scraper that notifies students at King Fahd University of Petroleum and Minerals (KFUPM) when a spot opens up in a full course section.
+A multi-user Telegram bot (for now) and automated scraper that notifies students at King Fahd University of Petroleum and Minerals (KFUPM) when a spot opens up in a full course section.
 
-[![GitHub Actions CI](https://github.com/YOUR_USERNAME/YOUR_REPO/actions/workflows/scheduler.yml/badge.svg)](https://github.com/YOUR_USERNAME/YOUR_REPO/actions/workflows/scheduler.yml)
 [![Python Version](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -11,21 +10,16 @@ A multi-user Telegram bot and automated scraper that notifies students at King F
 
 ## 🌟 Features
 
-- **Real-Time Notifications:** Get instant alerts on Telegram the moment a seat becomes available.
-- **Multi-User Support:** Any user can interact with the bot to track courses.
-- **Multi-Course Tracking:** Track multiple course sections simultaneously.
-- **Resilient & Automated:** A GitHub Actions-powered scraper runs every few minutes, ensuring reliable and continuous monitoring.
-- **Easy to Use:** Simple, command-based interaction directly within Telegram.
+- **Notifications via Telegram:** The scraper runs every 10 or so minutes using Github Actions, sending out notifications for tracked sections if they have available seating. If you want you can easily host it somewhere else where you can have it running much more frequently.
+- **Multi-User Support:** Anyone can interact with the bot just search the bot name qvcCourseTrackerBot on telegram and you can start a chat and start using it so long as the telebot script is being run somewhere.
+- **Multi-Course Tracking:** Can track multiple course sections simultaneously.
 
 ## 🤖 How It Works
 
-This project is built on a decoupled, serverless architecture, ensuring scalability and reliability.
+If you want to use the bot you are gonna have to run some things locally since I won't keep the bot script running myself. But it is really easy to set up I'll have instructions here.
 
-1.  **The Telegram Bot (The Frontend):** A Python script (`bot.py`) runs 24/7 on a cloud host (e.g., Render). It listens for user commands like `/track` and `/untrack`.
-2.  **The Database (The Brain):** When a user requests to track a course, the bot saves this request (user's chat ID, department, and CRN) to a central **Supabase** (PostgreSQL) database.
-3.  **The Scraper (The Worker):** A GitHub Actions workflow (`scheduler.yml`) triggers the main scraping script (`course_offering.py`) on a regular schedule (e.g., every 5 minutes).
-4.  **The Logic:** The scraper connects to the Supabase database to get the full list of all courses being tracked. It then makes an efficient, single API call per department to KFUPM's course offering API to check for seat availability.
-5.  **The Notification:** If an open spot is found, the scraper queries the database to find all users tracking that specific course and sends a personalized notification to each one via the Telegram Bot API. The tracking request is then removed to prevent spam.
+1. **telebot.py** This is the script for hosting the bot and its commands, you will need this running either on a server or locally. You only need this running when making the tracking request, the tracking itself and the notifications dont need this script.
+2. **course_offering.py
 
 
 ## 🚀 Getting Started
