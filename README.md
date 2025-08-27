@@ -26,7 +26,7 @@ If you want to use the bot you are gonna have to run some things locally since I
 
 ## 🚀 Getting Started
 
-You can interact with the live bot on Telegram here: [Your Bot's Telegram Link](https://t.me/qvcCourseTrackerBot)
+You can interact with the live bot on Telegram here: (https://t.me/qvcCourseTrackerBot)
 
 ### Telegram Bot Commands
 
@@ -36,26 +36,11 @@ Once you've started a chat with the bot, you can use the following commands:
 -   `/track <DEPT> <CRN>` - Start tracking a specific course section.
     -   *Example:* `/track ICS 202`
  
-TODO
+These aren't done yet TODO
 -   `/untrack <DEPT> <CRN>` - Stop tracking a course section.
     -   *Example:* `/untrack ICS 202`
 -   `/mycourses` - List all the courses you are currently tracking.
 
 ---
 
-## 🛠️ Setting Up for Development (For Contributors)
 
-Interested in contributing or running your own instance? Follow these steps.
-
-### Prerequisites
-
--   Python 3.11+
--   A Telegram account
--   A Supabase account
--   A GitHub account
-
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/YOUR_USERNAME/YOUR_REPO.git
-cd YOUR_REPO
